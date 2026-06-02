@@ -33,7 +33,9 @@ async function refreshToken(): Promise<string> {
   const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
 
   try {
-    const credentials = Buffer.from(`${username}:${password}`).toString('base64')
+    const credentials = Buffer.from(`${username}:${password}`).toString(
+      'base64',
+    )
     const res = await fetch(`${BASE_URL}/login`, {
       headers: { Authorization: `Basic ${credentials}` },
       signal: controller.signal,
@@ -60,12 +62,12 @@ async function refreshToken(): Promise<string> {
 
 async function authedFetch(url: string): Promise<Response> {
   let token = await getToken()
-  
+
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
 
   try {
-    let res = await fetch(url, { 
+    let res = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
       signal: controller.signal,
     })
@@ -73,7 +75,7 @@ async function authedFetch(url: string): Promise<Response> {
     if (res.status === 401) {
       cachedToken = null
       token = await refreshToken()
-      res = await fetch(url, { 
+      res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
         signal: controller.signal,
       })

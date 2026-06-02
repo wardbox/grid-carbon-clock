@@ -36,7 +36,7 @@ export const pollWattTime: PollWattTime<Record<string, never>, void> = async (
 
   // Replace all future forecast rows for this region
   if (futurePoints.length > 0) {
-    const deleted = await prisma.$transaction(async (tx) => {
+    const deleted = await prisma.$transaction(async tx => {
       const { count } = await tx.gridReading.deleteMany({
         where: { region: REGION, kind: 'forecast', ts: { gt: now } },
       })

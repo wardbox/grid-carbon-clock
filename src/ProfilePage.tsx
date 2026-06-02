@@ -22,10 +22,27 @@ function Row({ label, value }: { label: string; value: string }) {
         borderTop: '1px solid rgba(255,255,255,.07)',
       }}
     >
-      <span style={{ fontSize: 11, letterSpacing: 1.5, color: '#5f7a6c', flexBasis: '100%' }}>
+      <span
+        style={{
+          fontSize: 11,
+          letterSpacing: 1.5,
+          color: '#5f7a6c',
+          flexBasis: '100%',
+        }}
+      >
         {label}
       </span>
-      <span style={{ fontSize: 14, color: '#e8efe9', minWidth: 0, flex: 1, wordBreak: 'break-word' }}>{value}</span>
+      <span
+        style={{
+          fontSize: 14,
+          color: '#e8efe9',
+          minWidth: 0,
+          flex: 1,
+          wordBreak: 'break-word',
+        }}
+      >
+        {value}
+      </span>
     </div>
   )
 }
