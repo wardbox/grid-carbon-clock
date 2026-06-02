@@ -54,14 +54,23 @@ const Nav = forwardRef<HTMLElement, NavProps>(
             <>
               <Link
                 to='/profile'
-                className={cn(linkCls, location.pathname === '/profile' && 'text-[#e8efe9]')}
+                className={cn(
+                  linkCls,
+                  location.pathname === '/profile' && 'text-[#e8efe9]',
+                )}
                 onMouseEnter={() => prefetch('/profile', { id: user.id })}
               >
                 PROFILE
               </Link>
               <button
                 onClick={() => logout()}
-                style={{ fontFamily: mono, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                style={{
+                  fontFamily: mono,
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                }}
                 className={linkCls}
               >
                 LOG OUT
@@ -72,14 +81,18 @@ const Nav = forwardRef<HTMLElement, NavProps>(
               <Link
                 to='/login'
                 className={linkCls}
-                onMouseEnter={() => prefetch('/login', undefined, { assets: true })}
+                onMouseEnter={() =>
+                  prefetch('/login', undefined, { assets: true })
+                }
               >
                 SIGN IN
               </Link>
               <Link
                 to='/signup'
-                className='text-[11px] tracking-[1.5px] text-[#3ddc84] hover:text-[#9fe870] transition-colors'
-                onMouseEnter={() => prefetch('/signup', undefined, { assets: true })}
+                className='text-[11px] tracking-[1.5px] text-[#3ddc84] transition-colors hover:text-[#9fe870]'
+                onMouseEnter={() =>
+                  prefetch('/signup', undefined, { assets: true })
+                }
               >
                 SIGN UP →
               </Link>

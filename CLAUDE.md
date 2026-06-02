@@ -27,11 +27,12 @@ npm run format
 ## Environment
 
 - **Node version**: 24.16.0 (see `.nvmrc`). Run `nvm use` in the project root.
-- **Wasp CLI**: Must be installed globally under the correct Node version.
-  If you see `Cannot find package '@wasp.sh/wasp-cli-darwin-arm64-unknown'`,
-  switch to the right Node version and run:
+- **Wasp CLI**: Must be installed globally under the correct Node version. If
+  you see `Cannot find package '@wasp.sh/wasp-cli-darwin-arm64-unknown'`, switch
+  to the right Node version and run:
   `npm install -g @wasp.sh/wasp-cli@0.23.0 --force`
-- **nvm alias**: Run `nvm alias default 24.16.0` to make it stick across sessions.
+- **nvm alias**: Run `nvm alias default 24.16.0` to make it stick across
+  sessions.
 - Use `npx tsc --noemit` to quickly check for TypeScript errors without running
   the full Wasp build.
 

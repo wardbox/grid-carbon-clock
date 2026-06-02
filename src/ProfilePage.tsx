@@ -51,7 +51,9 @@ const Profile = ({ user }: { user: AuthUser }) => {
       >
         Profile
       </h1>
-      <p style={{ fontFamily: mono, fontSize: 13, color: '#7d9788', margin: 0 }}>
+      <p
+        style={{ fontFamily: mono, fontSize: 13, color: '#7d9788', margin: 0 }}
+      >
         {greeting}, {user?.username || 'there'}.
       </p>
 
@@ -60,9 +62,7 @@ const Profile = ({ user }: { user: AuthUser }) => {
         <Row label='EMAIL' value={user?.email || '—'} />
         <Row
           label='NOTIFY BELOW'
-          value={
-            notifyBelow != null ? `${notifyBelow} gCO₂/kWh` : 'not set'
-          }
+          value={notifyBelow != null ? `${notifyBelow} gCO₂/kWh` : 'not set'}
         />
       </div>
     </Panel>

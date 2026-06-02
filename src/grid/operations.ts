@@ -1,5 +1,9 @@
 import { HttpError } from 'wasp/server'
-import type { GetGridData, SetNotifyThreshold, TriggerPoll } from 'wasp/server/operations'
+import type {
+  GetGridData,
+  SetNotifyThreshold,
+  TriggerPoll,
+} from 'wasp/server/operations'
 import type { GridReading } from 'wasp/entities'
 import { pollWattTime } from '../workers/pollWattTime'
 
@@ -9,7 +13,7 @@ const WINDOW_MS = 2 * 60 * 60 * 1000 // 2 hours
 // ── Public types ───────────────────────────────────────────────────────────
 
 export type HourlyPoint = {
-  ts: number   // Unix ms
+  ts: number // Unix ms
   moer: number // gCO₂/kWh
 }
 
@@ -64,7 +68,8 @@ function findCleanestWindow(
   for (let i = 0; i < future.length; i++) {
     const windowEnd = future[i].ts.getTime() + WINDOW_MS
     const pts = future.filter(
-      r => r.ts.getTime() >= future[i].ts.getTime() && r.ts.getTime() <= windowEnd,
+      r =>
+        r.ts.getTime() >= future[i].ts.getTime() && r.ts.getTime() <= windowEnd,
     )
     if (pts.length < 2) continue
     const avg = pts.reduce((s, r) => s + r.moer, 0) / pts.length
@@ -107,7 +112,8 @@ export const getGridData = (async (_args, context) => {
   ])
 
   const currentMoer = latestActual?.moer ?? null
-  const cleanScore = currentMoer !== null ? computeCleanScore(currentMoer) : null
+  const cleanScore =
+    currentMoer !== null ? computeCleanScore(currentMoer) : null
   const forecast = downsampleHourly(forecastReadings)
   const cleanestWindow = findCleanestWindow(forecastReadings, currentMoer)
 
@@ -134,7 +140,10 @@ export const setNotifyThreshold = (async (
 
   const threshold = Math.round(args.threshold)
   if (threshold < 0 || threshold > 1000) {
-    throw new HttpError(400, 'Threshold must be between 0 and 1000 gCO\u2082/kWh')
+    throw new HttpError(
+      400,
+      'Threshold must be between 0 and 1000 gCO\u2082/kWh',
+    )
   }
 
   await context.entities.User.update({

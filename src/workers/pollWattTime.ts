@@ -29,7 +29,9 @@ export const pollWattTime: PollWattTime<Record<string, never>, void> = async (
         kind: 'actual',
       },
     })
-    console.log(`[pollWattTime] Actual: ${moer.toFixed(1)} gCO\u2082/kWh at ${latestActual.point_time}`)
+    console.log(
+      `[pollWattTime] Actual: ${moer.toFixed(1)} gCO\u2082/kWh at ${latestActual.point_time}`,
+    )
   }
 
   // Replace all future forecast rows for this region

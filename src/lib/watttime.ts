@@ -7,7 +7,11 @@ const TOKEN_TTL_MS = 25 * 60 * 1000 // 25 min — tokens expire ~30 min
 // ── Auth ───────────────────────────────────────────────────────────────────
 
 export async function getToken(): Promise<string> {
-  if (cachedToken && tokenFetchedAt && Date.now() - tokenFetchedAt < TOKEN_TTL_MS) {
+  if (
+    cachedToken &&
+    tokenFetchedAt &&
+    Date.now() - tokenFetchedAt < TOKEN_TTL_MS
+  ) {
     return cachedToken
   }
   return refreshToken()
@@ -17,7 +21,9 @@ async function refreshToken(): Promise<string> {
   const username = process.env.WATTTIME_USERNAME
   const password = process.env.WATTTIME_PASSWORD
   if (!username || !password) {
-    throw new Error('WATTTIME_USERNAME and WATTTIME_PASSWORD must be set in .env.server')
+    throw new Error(
+      'WATTTIME_USERNAME and WATTTIME_PASSWORD must be set in .env.server',
+    )
   }
 
   const credentials = Buffer.from(`${username}:${password}`).toString('base64')
@@ -95,5 +101,5 @@ export async function fetchForecast(): Promise<ForecastRun> {
 // ── Unit conversion ────────────────────────────────────────────────────────
 
 export function lbsMwhToGCO2KWh(lbsPerMwh: number): number {
-  return lbsPerMwh * 453.592 / 1000
+  return (lbsPerMwh * 453.592) / 1000
 }

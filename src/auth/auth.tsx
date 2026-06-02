@@ -53,12 +53,10 @@ export function Login() {
         <LoginForm appearance={authAppearance} />
       </div>
       <p className='login-text'>
-        No account yet?{' '}
-        <Link to='/signup'>create one →</Link>
+        No account yet? <Link to='/signup'>create one →</Link>
       </p>
       <p className='login-text'>
-        Forgot your password?{' '}
-        <Link to='/request-password-reset'>reset it</Link>
+        Forgot your password? <Link to='/request-password-reset'>reset it</Link>
       </p>
     </Layout>
   )
@@ -71,8 +69,7 @@ export function Signup() {
         <SignupForm appearance={authAppearance} />
       </div>
       <p className='login-text'>
-        Already have an account?{' '}
-        <Link to='/login'>sign in</Link>
+        Already have an account? <Link to='/login'>sign in</Link>
       </p>
     </Layout>
   )
@@ -85,8 +82,7 @@ export function EmailVerification() {
         <VerifyEmailForm appearance={authAppearance} />
       </div>
       <p className='login-text'>
-        All set?{' '}
-        <Link to='/login'>sign in</Link>
+        All set? <Link to='/login'>sign in</Link>
       </p>
     </Layout>
   )
@@ -109,8 +105,7 @@ export function PasswordReset() {
         <ResetPasswordForm appearance={authAppearance} />
       </div>
       <p className='login-text'>
-        Done?{' '}
-        <Link to='/login'>sign in</Link>
+        Done? <Link to='/login'>sign in</Link>
       </p>
     </Layout>
   )

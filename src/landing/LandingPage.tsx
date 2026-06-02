@@ -32,7 +32,11 @@ function intensityMeta(moer: number | null): IntensityMeta {
   if (moer === null)
     return { label: 'NO DATA', color: '#7d9788', glow: 'rgba(125,151,136,.3)' }
   if (moer < 180)
-    return { label: 'VERY CLEAN', color: '#3ddc84', glow: 'rgba(61,220,132,.45)' }
+    return {
+      label: 'VERY CLEAN',
+      color: '#3ddc84',
+      glow: 'rgba(61,220,132,.45)',
+    }
   if (moer < 280)
     return { label: 'CLEAN', color: '#9fe870', glow: 'rgba(159,232,112,.4)' }
   if (moer < 400)
@@ -291,7 +295,9 @@ export default function Landing() {
   if (isLoading) {
     return (
       <Shell>
-        <div style={{ padding: '64px 0', textAlign: 'center', color: '#7d9788' }}>
+        <div
+          style={{ padding: '64px 0', textAlign: 'center', color: '#7d9788' }}
+        >
           Loading grid data…
         </div>
       </Shell>
@@ -489,8 +495,16 @@ export default function Landing() {
               >
                 <defs>
                   <linearGradient id='moerFill' x1='0' y1='0' x2='0' y2='1'>
-                    <stop offset='0%' stopColor={meta.color} stopOpacity={0.5} />
-                    <stop offset='100%' stopColor={meta.color} stopOpacity={0} />
+                    <stop
+                      offset='0%'
+                      stopColor={meta.color}
+                      stopOpacity={0.5}
+                    />
+                    <stop
+                      offset='100%'
+                      stopColor={meta.color}
+                      stopOpacity={0}
+                    />
                   </linearGradient>
                 </defs>
                 <XAxis
@@ -540,7 +554,9 @@ export default function Landing() {
             }}
           >
             <span>◀ now</span>
-            <span style={{ color: '#3ddc84' }}>green band = cleanest window</span>
+            <span style={{ color: '#3ddc84' }}>
+              green band = cleanest window
+            </span>
             <span>forecast ▶</span>
           </div>
         </>
@@ -627,7 +643,8 @@ export default function Landing() {
           lineHeight: 1.6,
         }}
       >
-        Region: CAISO_NORTH · Live data via WattTime · Marginal emissions (MOER).
+        Region: CAISO_NORTH · Live data via WattTime · Marginal emissions
+        (MOER).
       </div>
     </Shell>
   )
