@@ -1,0 +1,12 @@
+---
+description: Dependencies & Package Management
+globs: 
+alwaysApply: false
+---
+# Dependencies & Package Management
+## Installation
+
+- Do NOT add dependencies to 'main.wasp'
+- Install dependencies via 'npm install'
+- Use exact versions for critical dependencies
+- Don't manually edit [package.json](mdc:package.json), rely on npm to handle it
