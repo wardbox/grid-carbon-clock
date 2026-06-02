@@ -7,7 +7,6 @@ import { Footer } from './root-components/footer'
 import { Nav } from './root-components/nav'
 import { ScrollToTop } from './root-components/scroll-to-top'
 import { Toaster } from './root-components/toaster'
-import { TransitionPlayground } from './root-components/transition-playground'
 import { transitions } from './motion/transitionPresets'
 import './Root.css'
 import '@fontsource-variable/inter'
@@ -19,23 +18,25 @@ export default function Root() {
     <MotionConfig reducedMotion='user' transition={transitions.snappy}>
       <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
         <MotionProvider>
-          <div className='bg-background text-foreground flex h-screen flex-col'>
-            <header className='border-b'>
+          <div
+            className='text-foreground flex min-h-screen flex-col'
+            style={{ background: '#060b09' }}
+          >
+            <header>
               <Nav user={user} userLoading={isLoading} />
             </header>
-            <main className='flex-1 px-4 py-12 sm:px-6 sm:py-40 lg:px-8'>
+            <main className='flex-1 px-4 pb-12 sm:px-6 lg:px-8'>
               <div className='mx-auto max-w-7xl'>
                 <Outlet />
               </div>
             </main>
             <Toaster />
             <ScrollToTop />
-            <footer className='border-input bg-background relative z-50 border-t'>
+            <footer className='relative z-50'>
               <div className='relative z-50 mx-auto max-w-7xl'>
                 <Footer />
               </div>
             </footer>
-            <TransitionPlayground />
           </div>
         </MotionProvider>
       </ThemeProvider>

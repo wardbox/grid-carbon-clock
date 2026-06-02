@@ -1,103 +1,69 @@
-# Roke
+# Grid Carbon Clock
 
-A Wasp starter with sensible defaults.
+**Live:** [your-url-here] · **Region:** CAISO Northern California
 
-## What's Included
+Shows how carbon-intense your grid electricity is *right now*, and the cleanest window in the next 24 hours to run high-draw appliances — laundry, EV charging, dishwasher. Shift your usage into the green band and cut the emissions of that energy without changing how much you use.
 
-- **Authentication** - Email/password with verification and password reset
-- **UI Components** - shadcn/ui components (Button, Card, Dropdown, Sheet, etc.)
-- **Animations** - Motion spring animations with presets (snappy, bouncy, heavy)
-- **Dark Mode** - Theme toggle with system preference support
-- **TypeScript** - Full type safety throughout
+## Why marginal emissions (MOER)?
 
-## Getting Started
+This app uses **marginal** operating emissions rate, not average grid intensity. MOER reflects which generator actually responds when you add or drop load at a given moment — so it's the correct signal for *load-shifting* decisions. Average intensity tells you the grid's overall mix; marginal tells you the real consequence of *your* choice to run the dryer now vs. at noon. Data comes from [WattTime](https://watttime.org).
 
-1. Click "Use this template" button at the top of the repository
-2. Clone your new repository
-3. Install dependencies and start:
+## Why one region?
+
+The demo runs on **CAISO_NORTH** because WattTime's free tier provides real marginal-emissions data *and* forecasts for that balancing authority at no cost. The architecture is region-agnostic — the region is a single config value and the data model is keyed by region. Adding more grids is a paid-tier API change, not a rewrite.
+
+## Stack
+
+- **Wasp** — full-stack framework (auth, client/server RPC, scheduled jobs)
+- **Postgres** on **Fly.io**, **Prisma** ORM
+- **Wasp Jobs (PgBoss)** — polls WattTime every 15 min, stores actuals + forecast
+- **React + Tailwind + shadcn/ui**, Recharts for the forecast curve
+
+## How it works
+
+1. A scheduled job (PgBoss, every 15 min) refreshes the WattTime token, pulls the latest MOER + 24h forecast for CAISO_NORTH, converts lbs CO₂/MWh → gCO₂/kWh, and upserts into Postgres.
+2. A server query returns the current reading, the hourly-downsampled forecast, and the computed cleanest 2-hour window (sliding-average minimum over the forecast).
+3. The client renders the live intensity, a clean-score dial, the cleanest-window callout, and the 24h curve.
+4. Logged-in users can save a "notify me below N gCO₂/kWh" threshold (persisted; alerting is a planned follow-up).
+
+## Local development
 
 ```bash
-npm install
+# 1. Register a free WattTime account (API-only, no web sign-up page):
+curl -X POST https://api.watttime.org/register \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"you","password":"...","email":"you@example.com","org":"personal"}'
+
+# 2. Copy env file and fill in credentials
+cp .env.server.example .env.server
+
+# 3. Start the database, run migrations, start dev server
 wasp db start
 wasp db migrate-dev
 wasp start
 ```
 
-## Project Structure
+The first data appears after the job's first run (up to 15 min). To trigger it immediately in development, click the **POLL** button in the top-right of the dashboard (dev-only), which calls the `triggerPoll` action. In production this action is restricted to admins.
+
+## Environment variables
+
+Set in `.env.server`:
 
 ```
-src/
-├── auth/           # Login, signup, password reset
-├── motion/         # Animation presets and provider
-├── landing/        # Home page (customize this!)
-├── client/components/  # shadcn/ui components
-└── root-components/    # Nav, footer, theme
+WATTTIME_USERNAME=...
+WATTTIME_PASSWORD=...
 ```
 
-Each directory has a `CLAUDE.md` file explaining its purpose and how to
-customize it.
+A free WattTime account works — no Pro subscription needed for CAISO_NORTH.
 
-## Customization Checklist
+## Status
 
-1. **Landing page** - Edit `src/landing/LandingPage.tsx`
-2. **App name** - Set `REACT_APP_NAME` in `.env.client`
-3. **Meta tags** - Update `head` section in `main.wasp` (replace placeholder
-   domain TODOs like roke.dev)
-4. **Auth emails** - Edit templates in `src/auth/email.ts`
-5. **Email provider** - Change from `Dummy` to SendGrid/Mailgun in `main.wasp`
+v1, shipped. Out of scope by design: multiple regions, notification delivery, solar/self-generation modeling. The point was a focused, working, deployed demonstration — not a platform.
 
-## Key Files
+---
 
-| File                               | Purpose                                |
-| ---------------------------------- | -------------------------------------- |
-| `main.wasp`                        | Routes, pages, auth config, operations |
-| `schema.prisma`                    | Database models                        |
-| `src/landing/LandingPage.tsx`      | Home page content                      |
-| `src/auth/email.ts`                | Email templates                        |
-| `src/motion/transitionPresets.tsx` | Animation variants                     |
+## Portfolio note
 
-## Adding Features
-
-### New Page
-
-1. Add route and page in `main.wasp`
-2. Create component in `src/`
-3. Add to nav if needed in `src/root-components/nav.tsx`
-
-### New Database Model
-
-1. Add model to `schema.prisma`
-2. Run `wasp db migrate-dev`
-3. Create operations in `main.wasp` and implement in `src/`
-
-### New UI Component
-
-```bash
-npx shadcn@latest add [component-name]
-```
-
-## Environment Variables
-
-### Client (`.env.client`)
-
-```
-REACT_APP_NAME=Your App Name
-```
-
-### Server (`.env.server`)
-
-```
-DATABASE_URL=postgresql://...
-ADMIN_EMAILS=admin@example.com
-```
-
-## Learn More
-
-- [Wasp Documentation](https://wasp-lang.dev)
-- [shadcn/ui](https://ui.shadcn.com)
-- [Motion](https://motion.dev)
-- [Phosphor Icons](https://phosphoricons.com)
-
-## License
-
-MIT License - use this in your own projects!
+> I came up through DevOps and infrastructure, and I wanted a focused piece that showed I can carry a full-stack feature end to end — and that I understand the energy domain I want to work in. Grid Carbon Clock pulls live marginal-emissions data from the California grid, stores it through a scheduled job, computes the cleanest window to run high-draw appliances, and serves it through an authenticated React app deployed on Fly.io.
+>
+> I deliberately scoped it to one grid region: WattTime's free tier gives real forecast data for CAISO Northern California, so rather than fake multi-region support I built it region-agnostic at the data layer and shipped the one region that worked for real. I'd rather demonstrate a working forecast than a broad mock. The whole thing is built on the marginal-emissions signal (MOER) rather than average intensity, because marginal is the signal that actually tells you whether shifting your usage reduces emissions — which is the kind of distinction the grid-software space cares about.

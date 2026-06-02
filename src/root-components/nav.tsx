@@ -1,283 +1,90 @@
-import { forwardRef, useState, type HTMLAttributes } from 'react'
+import { forwardRef, type HTMLAttributes } from 'react'
 import { useLocation } from 'react-router'
-import { cn, usePrefetch } from '../lib/utils'
 import { Link } from 'wasp/client/router'
-import {
-  HouseSimpleIcon,
-  ListIcon,
-  MountainsIcon,
-  UserIcon,
-} from '@phosphor-icons/react'
-import { ModeToggle } from '../client/components/mode-toggle'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '../client/components/ui/sheet'
-import { Button } from '../client/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../client/components/ui/dropdown-menu'
 import { logout } from 'wasp/client/auth'
 import { type User } from 'wasp/entities'
-import { Skeleton } from '../client/components/ui/skeleton'
-import { motion } from 'motion/react'
-import { fadeIn } from '../motion/transitionPresets'
+import { cn, usePrefetch } from '../lib/utils'
+
+const mono = "'IBM Plex Mono', ui-monospace, monospace"
 
 interface NavProps extends HTMLAttributes<HTMLElement> {
   user?: User | null
   userLoading?: boolean
 }
 
+const linkCls =
+  'text-[11px] tracking-[1.5px] text-[#5f7a6c] hover:text-[#e8efe9] transition-colors'
+
 const Nav = forwardRef<HTMLElement, NavProps>(
   ({ user, userLoading, ...props }, ref) => {
-    const [open, setOpen] = useState(false)
-    const [dropdownOpen, setDropdownOpen] = useState(false)
     const location = useLocation()
     const prefetch = usePrefetch()
-
-    const handleNavigation = () => {
-      setOpen(false)
-    }
 
     return (
       <nav
         ref={ref}
+        style={{ fontFamily: mono }}
         className={cn(
-          'bg-background sticky top-0 z-50 mx-auto flex w-full max-w-7xl items-center justify-between p-3 px-4 lg:px-6',
+          'mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 lg:px-8',
           props.className,
         )}
         {...props}
       >
-        <div className='flex items-center space-x-4 lg:space-x-8'>
-          <Link
-            to='/'
-            className='flex items-center space-x-2'
-            onMouseEnter={() => prefetch('/', undefined, { assets: true })}
-          >
-            <MountainsIcon size={24} />
-            <span className='font-bold'>
-              {import.meta.env.REACT_APP_NAME || 'Roke'}
-            </span>
-          </Link>
-          <div className='text-muted-foreground hidden items-center space-x-4 md:flex lg:space-x-6'>
-            <Link
-              to='/'
-              className={cn(
-                'text-md hover:text-primary flex items-center space-x-2 font-medium transition-colors',
-                location.pathname === '/' && 'text-primary',
-              )}
-              onMouseEnter={() => prefetch('/', undefined, { assets: true })}
-            >
-              <span>Home</span>
-            </Link>
-          </div>
-        </div>
+        <Link
+          to='/'
+          className='flex items-center gap-2.5 no-underline'
+          onMouseEnter={() => prefetch('/', undefined, { assets: true })}
+        >
+          <span
+            style={{
+              width: 9,
+              height: 9,
+              borderRadius: 999,
+              background: '#3ddc84',
+              boxShadow: '0 0 8px rgba(61,220,132,.7)',
+            }}
+          />
+          <span className='text-[12px] tracking-[2px] text-[#e8efe9]'>
+            GRID CARBON CLOCK
+          </span>
+        </Link>
 
-        <div className='flex items-center gap-4'>
-          <ModeToggle />
-          {/* Desktop Menu */}
-          <div className='hidden items-center space-x-4 md:flex'>
-            {userLoading ? (
-              <div className='flex items-center'>
-                <Skeleton className='h-10 w-10' />
-              </div>
-            ) : (
-              <div className='animate-in fade-in flex items-center'>
-                {user ? (
-                  <DropdownMenu
-                    open={dropdownOpen}
-                    onOpenChange={setDropdownOpen}
-                    modal={false}
-                  >
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant='outline'
-                        size='icon'
-                        aria-label='User menu'
-                      >
-                        <UserIcon size={24} />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align='end'>
-                      <Link
-                        to='/profile'
-                        onMouseEnter={() =>
-                          prefetch('/profile', { id: user.id })
-                        }
-                        onClick={() => setDropdownOpen(false)}
-                        className='cursor-pointer'
-                      >
-                        <DropdownMenuItem>Profile</DropdownMenuItem>
-                      </Link>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className='cursor-pointer text-red-600'
-                        onClick={() => {
-                          setDropdownOpen(false)
-                          logout()
-                        }}
-                      >
-                        Log out
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
-                  <DropdownMenu
-                    open={dropdownOpen}
-                    onOpenChange={setDropdownOpen}
-                    modal={false}
-                  >
-                    <DropdownMenuTrigger asChild>
-                      <Button variant='outline' size='icon'>
-                        <UserIcon size={24} />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align='end'>
-                      <Link
-                        to='/login'
-                        onMouseEnter={() =>
-                          prefetch('/login', undefined, {
-                            assets: true,
-                          })
-                        }
-                      >
-                        <DropdownMenuItem
-                          onClick={() => setDropdownOpen(false)}
-                          className='cursor-pointer'
-                        >
-                          Log in
-                        </DropdownMenuItem>
-                      </Link>
-                      <Link
-                        to='/signup'
-                        onMouseEnter={() =>
-                          prefetch('/signup', undefined, {
-                            assets: true,
-                          })
-                        }
-                      >
-                        <DropdownMenuItem
-                          onClick={() => setDropdownOpen(false)}
-                          className='cursor-pointer'
-                        >
-                          Sign up
-                        </DropdownMenuItem>
-                      </Link>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Mobile Menu */}
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger className='md:hidden'>
-              <ListIcon size={24} />
-            </SheetTrigger>
-            <SheetContent side='right'>
-              <SheetHeader>
-                <SheetTitle hidden>Navigation</SheetTitle>
-                <SheetDescription hidden>
-                  Navigate to the pages you want.
-                </SheetDescription>
-              </SheetHeader>
-              <div className='flex flex-col gap-3 space-y-4'>
-                <Link
-                  to='/'
-                  className={cn(
-                    'text-md hover:text-primary flex items-center space-x-4 font-medium transition-colors',
-                    location.pathname === '/' && 'text-primary',
-                  )}
-                  onClick={handleNavigation}
-                  aria-label='Home'
-                >
-                  <Button size='icon' className='rounded-full'>
-                    <HouseSimpleIcon size={24} weight='fill' />
-                  </Button>
-                  <span className='text-3xl'>Home</span>
-                </Link>
-                {/* Mobile Auth Menu Items */}
-                {userLoading ? (
-                  <>
-                    <DropdownMenuSeparator />
-                    <Skeleton className='h-10 w-10' />
-                  </>
-                ) : (
-                  <motion.div
-                    variants={fadeIn}
-                    initial='initial'
-                    animate='animate'
-                    className='col-span-2 mx-auto flex w-full gap-2'
-                  >
-                    {user ? (
-                      <div className='col-span-2 mx-auto flex w-full flex-col justify-center gap-8'>
-                        <DropdownMenuSeparator />
-                        <Link
-                          to='/profile'
-                          className={cn(
-                            'text-md hover:text-primary flex items-center space-x-4 font-medium transition-colors',
-                            location.pathname.startsWith('/profile') &&
-                              'text-primary',
-                          )}
-                          onClick={handleNavigation}
-                          onMouseEnter={() =>
-                            prefetch('/profile/:id', { id: user.id })
-                          }
-                        >
-                          <Button size='icon' className='rounded-full'>
-                            <UserIcon size={24} weight='fill' />
-                          </Button>
-                          <span className='text-3xl'>Profile</span>
-                        </Link>
-                        <Button
-                          onClick={() => {
-                            logout()
-                            handleNavigation()
-                          }}
-                          variant='destructive'
-                        >
-                          <span className='text-lg'>Log out</span>
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className='col-span-2 mx-auto flex w-full justify-center gap-4 pt-8'>
-                        <DropdownMenuSeparator />
-                        <Link
-                          to='/login'
-                          className='text-md flex cursor-pointer items-center space-x-4 font-medium transition-all'
-                          onClick={handleNavigation}
-                          onMouseEnter={() => prefetch('/login')}
-                        >
-                          <Button>
-                            <span className='text-lg'>Log in</span>
-                          </Button>
-                        </Link>
-                        <Link
-                          to='/signup'
-                          className='text-md flex items-center space-x-4 font-medium'
-                          onClick={handleNavigation}
-                          onMouseEnter={() => prefetch('/signup')}
-                        >
-                          <Button>
-                            <span className='text-lg'>Sign up</span>
-                          </Button>
-                        </Link>
-                      </div>
-                    )}
-                  </motion.div>
-                )}
-              </div>
-            </SheetContent>
-          </Sheet>
+        <div className='flex items-center gap-5'>
+          {userLoading ? null : user ? (
+            <>
+              <Link
+                to='/profile'
+                className={cn(linkCls, location.pathname === '/profile' && 'text-[#e8efe9]')}
+                onMouseEnter={() => prefetch('/profile', { id: user.id })}
+              >
+                PROFILE
+              </Link>
+              <button
+                onClick={() => logout()}
+                style={{ fontFamily: mono, background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                className={linkCls}
+              >
+                LOG OUT
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to='/login'
+                className={linkCls}
+                onMouseEnter={() => prefetch('/login', undefined, { assets: true })}
+              >
+                SIGN IN
+              </Link>
+              <Link
+                to='/signup'
+                className='text-[11px] tracking-[1.5px] text-[#3ddc84] hover:text-[#9fe870] transition-colors'
+                onMouseEnter={() => prefetch('/signup', undefined, { assets: true })}
+              >
+                SIGN UP →
+              </Link>
+            </>
+          )}
         </div>
       </nav>
     )

@@ -1,13 +1,31 @@
 import { type AuthUser } from 'wasp/auth'
-import { motion } from 'motion/react'
-import { fadeIn } from './motion/transitionPresets'
 import { useState, useEffect } from 'react'
+import { Panel, Brand, serif, mono } from './root-components/panel'
 
 const getGreeting = () => {
   const hour = new Date().getHours()
   if (hour < 12) return 'Good morning'
   if (hour < 18) return 'Good afternoon'
   return 'Good evening'
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'baseline',
+        padding: '14px 0',
+        borderTop: '1px solid rgba(255,255,255,.07)',
+      }}
+    >
+      <span style={{ fontSize: 11, letterSpacing: 1.5, color: '#5f7a6c' }}>
+        {label}
+      </span>
+      <span style={{ fontSize: 14, color: '#e8efe9' }}>{value}</span>
+    </div>
+  )
 }
 
 const Profile = ({ user }: { user: AuthUser }) => {
@@ -17,25 +35,37 @@ const Profile = ({ user }: { user: AuthUser }) => {
     setGreeting(getGreeting())
   }, [])
 
+  const notifyBelow = (user as { notifyBelow?: number | null })?.notifyBelow
+
   return (
-    <motion.div
-      initial='initial'
-      animate='animate'
-      exit='exit'
-      variants={fadeIn}
-      className='mx-auto flex max-w-7xl flex-col gap-8 px-4 py-12 sm:px-6 sm:py-16 lg:px-8'
-    >
-      <h1 className='text-4xl font-thin tracking-tight'>Profile</h1>
-      <p className='text-muted-foreground text-lg'>
-        {greeting}, {user?.username || 'there'}!
+    <Panel className='mx-auto w-full max-w-2xl py-12'>
+      <Brand />
+      <h1
+        style={{
+          fontFamily: serif,
+          fontWeight: 400,
+          fontSize: 40,
+          color: '#f3f8f4',
+          margin: '20px 0 6px',
+        }}
+      >
+        Profile
+      </h1>
+      <p style={{ fontFamily: mono, fontSize: 13, color: '#7d9788', margin: 0 }}>
+        {greeting}, {user?.username || 'there'}.
       </p>
-      <div className='bg-card text-card-foreground space-y-6 rounded-lg border p-6 shadow-sm'>
-        <div className='space-y-2'>
-          <p className='text-muted-foreground text-sm font-medium'>Email</p>
-          <p className='text-lg'>{user?.email || 'N/A'}</p>
-        </div>
+
+      <div style={{ marginTop: 28 }}>
+        <Row label='USERNAME' value={user?.username || '—'} />
+        <Row label='EMAIL' value={user?.email || '—'} />
+        <Row
+          label='NOTIFY BELOW'
+          value={
+            notifyBelow != null ? `${notifyBelow} gCO₂/kWh` : 'not set'
+          }
+        />
       </div>
-    </motion.div>
+    </Panel>
   )
 }
 

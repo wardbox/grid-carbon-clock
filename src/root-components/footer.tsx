@@ -1,170 +1,34 @@
-import { Link } from 'react-router'
-import { motion } from 'motion/react'
-import { fadeIn } from '../motion/transitionPresets'
-import {
-  MountainsIcon,
-  GithubLogoIcon,
-  TwitterLogoIcon,
-} from '@phosphor-icons/react'
-import { usePrefetch } from '../lib/utils'
-
-const ScrollToTopLink = ({
-  to,
-  children,
-  className,
-}: {
-  to: string
-  children: React.ReactNode
-  className?: string
-}) => {
-  const handleClick = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-  const prefetch = usePrefetch()
-
-  return (
-    <Link
-      to={to}
-      className={className}
-      onClick={handleClick}
-      onMouseEnter={() => prefetch(to, undefined, { assets: true })}
-    >
-      {children}
-    </Link>
-  )
-}
-
-const navigation = {
-  social: [
-    {
-      name: 'GitHub',
-      href: 'https://github.com/wardbox/roke',
-      icon: 'GithubLogo',
-    },
-    {
-      name: 'Twitter',
-      href: 'https://twitter.com/ward_box',
-      icon: 'TwitterLogo',
-    },
-  ],
-}
+const mono = "'IBM Plex Mono', ui-monospace, monospace"
 
 export function Footer() {
+  const year = new Date().getFullYear()
   return (
-    <motion.div
-      variants={fadeIn}
-      initial='initial'
-      animate='animate'
-      className='relative z-50 mx-auto max-w-7xl'
+    <div
+      style={{ fontFamily: mono }}
+      className='mx-auto flex max-w-7xl items-center justify-between px-4 py-5 lg:px-8'
     >
-      <div className='px-6 py-4'>
-        {/* Mobile Layout */}
-        <div className='flex flex-col space-y-2 md:hidden'>
-          {/* Logo & Social */}
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-2'>
-              <MountainsIcon size={20} weight='fill' />
-              <span className='text-muted-foreground text-sm'>
-                &copy; {new Date().getFullYear()}{' '}
-                {import.meta.env.REACT_APP_NAME || 'Roke'}
-              </span>
-            </div>
-            <div className='flex gap-4'>
-              {navigation.social.map(item => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className='text-muted-foreground hover:text-foreground transition-colors'
-                  aria-label={item.name}
-                >
-                  {item.icon === 'GithubLogo' ? (
-                    <GithubLogoIcon size={20} weight='fill' />
-                  ) : (
-                    <TwitterLogoIcon size={20} weight='fill' />
-                  )}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Navigation - Horizontal Scrolling */}
-          <div className='overflow-x-auto'>
-            <nav className='flex min-w-max gap-4 py-1' aria-label='Footer'>
-              <ScrollToTopLink
-                to='/'
-                className='text-muted-foreground hover:text-foreground text-sm whitespace-nowrap transition-colors'
-              >
-                Home
-              </ScrollToTopLink>
-            </nav>
-          </div>
-        </div>
-
-        {/* Desktop Layout */}
-        <div className='hidden md:flex md:items-center md:justify-between'>
-          <div className='flex items-center space-x-8'>
-            {/* Logo & Title */}
-            <div className='flex items-center space-x-3'>
-              <h2 className='flex items-center gap-2 text-lg font-semibold'>
-                <MountainsIcon size={20} weight='fill' />
-                {import.meta.env.REACT_APP_NAME || 'Roke'}
-              </h2>
-              <span className='text-muted-foreground'>|</span>
-              <p className='text-muted-foreground text-sm'>
-                A{' '}
-                <a
-                  href='https://wasp-lang.dev'
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className='text-foreground hover:text-primary transition-colors'
-                >
-                  Wasp
-                </a>{' '}
-                starter with sensible defaults
-              </p>
-            </div>
-
-            {/* Navigation */}
-            <nav className='flex gap-x-6' aria-label='Footer'>
-              <ScrollToTopLink
-                to='/'
-                className='text-muted-foreground hover:text-foreground text-sm transition-colors'
-              >
-                Home
-              </ScrollToTopLink>
-            </nav>
-          </div>
-
-          {/* Social & Copyright */}
-          <div className='flex items-center gap-6'>
-            <div className='flex gap-4'>
-              {navigation.social.map(item => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className='text-muted-foreground hover:text-foreground transition-colors'
-                  aria-label={item.name}
-                >
-                  {item.icon === 'GithubLogo' ? (
-                    <GithubLogoIcon size={20} weight='fill' />
-                  ) : (
-                    <TwitterLogoIcon size={20} weight='fill' />
-                  )}
-                </a>
-              ))}
-            </div>
-            <p className='text-muted-foreground text-xs'>
-              &copy; {new Date().getFullYear()}{' '}
-              {import.meta.env.REACT_APP_NAME || 'Roke'}
-            </p>
-          </div>
-        </div>
+      <span className='text-[11px] tracking-[1px] text-[#3f5249]'>
+        © {year} GRID CARBON CLOCK
+      </span>
+      <div className='flex items-center gap-5'>
+        <a
+          href='https://watttime.org'
+          target='_blank'
+          rel='noopener noreferrer'
+          className='text-[11px] tracking-[1px] text-[#5f7a6c] transition-colors hover:text-[#e8efe9]'
+        >
+          WATTTIME
+        </a>
+        <a
+          href='https://github.com/wardbox/grid-carbon-clock'
+          target='_blank'
+          rel='noopener noreferrer'
+          className='text-[11px] tracking-[1px] text-[#5f7a6c] transition-colors hover:text-[#e8efe9]'
+        >
+          GITHUB
+        </a>
       </div>
-    </motion.div>
+    </div>
   )
 }
 
