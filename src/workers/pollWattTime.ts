@@ -1,7 +1,7 @@
 import { type PollWattTime } from 'wasp/server/jobs'
+import { prisma } from 'wasp/server'
 import { fetchForecast, lbsMwhToGCO2KWh } from '../lib/watttime'
-
-const REGION = 'CAISO_NORTH'
+import { GRID_REGION as REGION } from '../lib/config'
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000
 
 export const pollWattTime: PollWattTime<Record<string, never>, void> = async (
@@ -36,16 +36,19 @@ export const pollWattTime: PollWattTime<Record<string, never>, void> = async (
 
   // Replace all future forecast rows for this region
   if (futurePoints.length > 0) {
-    const { count: deleted } = await context.entities.GridReading.deleteMany({
-      where: { region: REGION, kind: 'forecast', ts: { gt: now } },
-    })
-    await context.entities.GridReading.createMany({
-      data: futurePoints.map(p => ({
-        region: REGION,
-        ts: new Date(p.point_time),
-        moer: lbsMwhToGCO2KWh(p.value),
-        kind: 'forecast',
-      })),
+    const deleted = await prisma.$transaction(async (tx) => {
+      const { count } = await tx.gridReading.deleteMany({
+        where: { region: REGION, kind: 'forecast', ts: { gt: now } },
+      })
+      await tx.gridReading.createMany({
+        data: futurePoints.map(p => ({
+          region: REGION,
+          ts: new Date(p.point_time),
+          moer: lbsMwhToGCO2KWh(p.value),
+          kind: 'forecast',
+        })),
+      })
+      return count
     })
     console.log(
       `[pollWattTime] Forecast: replaced ${deleted} stale rows with ${futurePoints.length} new rows`,

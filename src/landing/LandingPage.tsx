@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import type { FormEvent, ReactNode } from 'react'
 import { useAuth } from 'wasp/client/auth'
+import { Link } from 'wasp/client/router'
 import {
   useQuery,
   getGridData,
@@ -619,12 +620,12 @@ export default function Landing() {
           </form>
         ) : (
           <div style={{ fontSize: 13, color: '#7d9788', marginTop: 12 }}>
-            <a
-              href='/login'
+            <Link
+              to='/login'
               style={{ color: '#e8efe9', textDecoration: 'underline' }}
             >
               Sign in
-            </a>{' '}
+            </Link>{' '}
             to save a notification threshold.
           </div>
         )}

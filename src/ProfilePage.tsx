@@ -15,15 +15,17 @@ function Row({ label, value }: { label: string; value: string }) {
       style={{
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'baseline',
+        alignItems: 'flex-start',
+        flexWrap: 'wrap',
+        gap: 8,
         padding: '14px 0',
         borderTop: '1px solid rgba(255,255,255,.07)',
       }}
     >
-      <span style={{ fontSize: 11, letterSpacing: 1.5, color: '#5f7a6c' }}>
+      <span style={{ fontSize: 11, letterSpacing: 1.5, color: '#5f7a6c', flexBasis: '100%' }}>
         {label}
       </span>
-      <span style={{ fontSize: 14, color: '#e8efe9' }}>{value}</span>
+      <span style={{ fontSize: 14, color: '#e8efe9', minWidth: 0, flex: 1, wordBreak: 'break-word' }}>{value}</span>
     </div>
   )
 }

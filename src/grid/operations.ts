@@ -6,8 +6,7 @@ import type {
 } from 'wasp/server/operations'
 import type { GridReading } from 'wasp/entities'
 import { pollWattTime } from '../workers/pollWattTime'
-
-const REGION = 'CAISO_NORTH'
+import { GRID_REGION as REGION } from '../lib/config'
 const WINDOW_MS = 2 * 60 * 60 * 1000 // 2 hours
 
 // ── Public types ───────────────────────────────────────────────────────────
@@ -67,6 +66,7 @@ function findCleanestWindow(
 
   for (let i = 0; i < future.length; i++) {
     const windowEnd = future[i].ts.getTime() + WINDOW_MS
+    if (!future.some(r => r.ts.getTime() >= windowEnd)) continue
     const pts = future.filter(
       r =>
         r.ts.getTime() >= future[i].ts.getTime() && r.ts.getTime() <= windowEnd,
@@ -136,6 +136,10 @@ export const setNotifyThreshold = (async (
 ) => {
   if (!context.user) {
     throw new HttpError(401, 'Must be logged in to save preferences')
+  }
+
+  if (!Number.isFinite(args.threshold)) {
+    throw new HttpError(400, 'Threshold must be a finite number')
   }
 
   const threshold = Math.round(args.threshold)

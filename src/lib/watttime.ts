@@ -1,4 +1,7 @@
+import { GRID_REGION } from './config'
+
 const BASE_URL = 'https://api.watttime.org'
+const FETCH_TIMEOUT_MS = Number(process.env.WATTTIME_FETCH_TIMEOUT) || 10000
 
 let cachedToken: string | null = null
 let tokenFetchedAt: number | null = null
@@ -26,33 +29,65 @@ async function refreshToken(): Promise<string> {
     )
   }
 
-  const credentials = Buffer.from(`${username}:${password}`).toString('base64')
-  const res = await fetch(`${BASE_URL}/login`, {
-    headers: { Authorization: `Basic ${credentials}` },
-  })
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
 
-  if (!res.ok) {
-    const body = await res.text()
-    throw new Error(`WattTime login failed (${res.status}): ${body}`)
+  try {
+    const credentials = Buffer.from(`${username}:${password}`).toString('base64')
+    const res = await fetch(`${BASE_URL}/login`, {
+      headers: { Authorization: `Basic ${credentials}` },
+      signal: controller.signal,
+    })
+
+    if (!res.ok) {
+      const body = await res.text()
+      throw new Error(`WattTime login failed (${res.status}): ${body}`)
+    }
+
+    const json = (await res.json()) as { token: string }
+    cachedToken = json.token
+    tokenFetchedAt = Date.now()
+    return cachedToken
+  } catch (err) {
+    if ((err as Error).name === 'AbortError') {
+      throw new Error(`WattTime login timed out after ${FETCH_TIMEOUT_MS}ms`)
+    }
+    throw err
+  } finally {
+    clearTimeout(timeoutId)
   }
-
-  const json = (await res.json()) as { token: string }
-  cachedToken = json.token
-  tokenFetchedAt = Date.now()
-  return cachedToken
 }
 
 async function authedFetch(url: string): Promise<Response> {
   let token = await getToken()
-  let res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+  
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
 
-  if (res.status === 401) {
-    cachedToken = null
-    token = await refreshToken()
-    res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+  try {
+    let res = await fetch(url, { 
+      headers: { Authorization: `Bearer ${token}` },
+      signal: controller.signal,
+    })
+
+    if (res.status === 401) {
+      cachedToken = null
+      token = await refreshToken()
+      res = await fetch(url, { 
+        headers: { Authorization: `Bearer ${token}` },
+        signal: controller.signal,
+      })
+    }
+
+    return res
+  } catch (err) {
+    if ((err as Error).name === 'AbortError') {
+      throw new Error(`WattTime request timed out after ${FETCH_TIMEOUT_MS}ms`)
+    }
+    throw err
+  } finally {
+    clearTimeout(timeoutId)
   }
-
-  return res
 }
 
 // ── Forecast ───────────────────────────────────────────────────────────────
@@ -79,7 +114,7 @@ interface ForecastApiResponse {
 }
 
 export async function fetchForecast(): Promise<ForecastRun> {
-  const url = `${BASE_URL}/v3/forecast?region=CAISO_NORTH&signal_type=co2_moer`
+  const url = `${BASE_URL}/v3/forecast?region=${GRID_REGION}&signal_type=co2_moer`
   const res = await authedFetch(url)
 
   if (!res.ok) {

@@ -71,7 +71,7 @@ action is restricted to admins.
 
 Set in `.env.server`:
 
-```
+```env
 WATTTIME_USERNAME=...
 WATTTIME_PASSWORD=...
 ```
