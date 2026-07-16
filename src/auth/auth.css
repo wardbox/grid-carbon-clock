@@ -1,20 +1,55 @@
-.login input {
-  color: #000;
-  border-radius: var(--radius);
+.login {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
-.login svg {
-  fill: #000;
+.login input {
+  color: #e8efe9;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+}
+
+.login input::placeholder {
+  color: #5f7a6c;
+}
+
+.login input:focus {
+  outline: none;
+  border-color: rgba(61, 220, 132, 0.5);
+}
+
+.login label {
+  color: #9fb3a6;
+  font-size: 12px;
+  letter-spacing: 0.5px;
 }
 
 .login button {
   border: none;
+  border-radius: 10px;
+  font-weight: 600;
 }
 
-.login span {
-  color: #000;
+.login a {
+  color: #3ddc84;
+  text-decoration: none;
+}
+
+.login a:hover {
+  text-decoration: underline;
 }
 
 .login-text {
-  color: hsl(var(--foreground));
+  color: #7d9788;
+  font-size: 12px;
+  margin-top: 14px;
+}
+
+.login-text a {
+  color: #3ddc84;
+  text-decoration: none;
+}
+
+.login-text a:hover {
+  text-decoration: underline;
 }

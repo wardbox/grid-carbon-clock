@@ -6,7 +6,7 @@ import path from 'path'
 export default defineConfig({
   plugins: [wasp(), tailwindcss()],
   server: {
-    open: true,
+    open: false,
     fs: {
       allow: [
         searchForWorkspaceRoot(process.cwd()),

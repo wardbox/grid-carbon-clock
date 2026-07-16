@@ -1,34 +1,23 @@
-app roke {
+app gridcarbonclock {
   wasp: {
-    version: "^0.21.0"
+    version: "^0.23.0"
   },
-  title: "Roke: A Full-Stack Wasp Starter with Modern UI Components",
+  title: "Grid Carbon Clock",
   head: [
-    "<meta name='description' content='A comprehensive Wasp starter template featuring shadcn/ui components, Motion animations, and TypeScript support for building modern full-stack web applications.'>",
-
-    "<!-- TODO: Replace roke.dev URLs with your actual domain -->",
-    "<meta property='og:url' content='https://roke.dev'>",
-    "<meta property='og:type' content='website'>",
-    "<meta property='og:title' content='Roke: A Full-Stack Wasp Starter with Modern UI Components'>",
-    "<meta property='og:description' content='A comprehensive Wasp starter template featuring shadcn/ui components, Motion animations, and TypeScript support for building modern full-stack web applications.'>",
-    "<!-- TODO: Replace with your actual OG image URL -->",
-    "<meta property='og:image' content='https://roke.dev/og.png'>",
-
-    "<meta name='twitter:card' content='summary_large_image'>",
-    "<!-- TODO: Replace roke.dev with your actual domain -->",
-    "<meta property='twitter:domain' content='roke.dev'>",
-    "<meta property='twitter:url' content='https://roke.dev'>",
-    "<meta name='twitter:title' content='Roke: A Full-Stack Wasp Starter with Modern UI Components'>",
-    "<meta name='twitter:description' content='A comprehensive Wasp starter template featuring shadcn/ui components, Motion animations, and TypeScript support for building modern full-stack web applications.'>",
-    "<meta name='twitter:image' content='https://roke.dev/og.png'>"
+    "<meta name='description' content='Real-time marginal carbon intensity for the CAISO Northern California grid. Find the cleanest 2-hour window to run high-draw appliances.' />",
+    "<meta property='og:title' content='Grid Carbon Clock' />",
+    "<meta property='og:description' content='Real-time marginal carbon intensity for CAISO Northern California. Shift laundry, EV charging, and appliances into the cleanest window.' />",
+    "<link rel='preconnect' href='https://fonts.googleapis.com' />",
+    "<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin='anonymous' />",
+    "<link href='https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&display=swap' rel='stylesheet' />"
   ],
   auth: {
     userEntity: User,
     methods: {
       email: {
         fromField: {
-          name: "Roke",
-          email: "noreply@example.com"
+          name: "Grid Carbon Clock",
+          email: "noreply@gridcarbonclock.dev"
         },
         emailVerification: {
           clientRoute: EmailVerificationRoute,
@@ -52,6 +41,8 @@ app roke {
     provider: Dummy,
   }
 }
+
+// ── Routes & Pages ─────────────────────────────────────────────────────────
 
 route Landing { path: "/", to: Landing }
 route Profile { path: "/profile", to: ProfilePage }
@@ -95,6 +86,37 @@ page NotFoundPage {
   component: import NotFound from "@src/404Page"
 }
 
+// ── Queries ────────────────────────────────────────────────────────────────
 
+query getGridData {
+  fn: import { getGridData } from "@src/grid/operations",
+  entities: [GridReading]
+}
 
+// ── Actions ────────────────────────────────────────────────────────────────
 
+action setNotifyThreshold {
+  fn: import { setNotifyThreshold } from "@src/grid/operations",
+  entities: [User]
+}
+
+action triggerPoll {
+  fn: import { triggerPoll } from "@src/grid/operations",
+  entities: [GridReading]
+}
+
+// ── Jobs ───────────────────────────────────────────────────────────────────
+
+job pollWattTime {
+  executor: PgBoss,
+  perform: {
+    fn: import { pollWattTime } from "@src/workers/pollWattTime",
+    executorOptions: {
+      pgBoss: {=json { "retryLimit": 2, "retryDelay": 60 } json=}
+    }
+  },
+  schedule: {
+    cron: "*/15 * * * *"
+  },
+  entities: [GridReading]
+}

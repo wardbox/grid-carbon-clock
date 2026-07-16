@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import {
   LoginForm,
   SignupForm,
@@ -9,93 +10,88 @@ import { Link } from 'wasp/client/router'
 import './auth.css'
 
 import type { CustomizationOptions } from 'wasp/client/auth'
-import { MountainsIcon } from '@phosphor-icons/react'
+import { Panel, Brand, serif } from '../root-components/panel'
 
 export const authAppearance: CustomizationOptions['appearance'] = {
   colors: {
-    brand: 'hsl(var(--brand-primary))',
-    brandAccent: 'hsl(var(--brand-accent))',
-    submitButtonText: 'hsl(var(--brand-primary-foreground))',
+    brand: '#3ddc84',
+    brandAccent: '#9fe870',
+    submitButtonText: '#06160d',
   },
 }
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({
+  title,
+  children,
+}: {
+  title: string
+  children: ReactNode
+}) {
   return (
-    <div className='animate-in fade-in mx-auto flex max-w-xl flex-col px-12 py-24 pt-12 font-sans sm:px-0 2xl:py-48'>
+    <Panel className='animate-in fade-in mx-auto w-full max-w-md py-12'>
+      <Brand />
+      <h1
+        style={{
+          fontFamily: serif,
+          fontWeight: 400,
+          fontSize: 34,
+          color: '#f3f8f4',
+          margin: '20px 0 24px',
+        }}
+      >
+        {title}
+      </h1>
       {children}
-    </div>
+    </Panel>
   )
 }
 
 export function Login() {
   return (
-    <Layout>
-      <MountainsIcon size={100} weight='thin' />
+    <Layout title='Sign in'>
       <div className='login'>
         <LoginForm appearance={authAppearance} />
       </div>
-      <br />
-      <span className='login-text text-sm font-medium'>
-        Don&apos;t have an account yet?{' '}
-        <Link to='/signup' className='underline'>
-          go to signup
-        </Link>
-        .
-      </span>
-      <br />
-      <span className='login-text text-sm font-medium'>
-        Forgot your password?{' '}
-        <Link to='/request-password-reset' className='underline'>
-          reset it
-        </Link>
-        .
-      </span>
+      <p className='login-text'>
+        No account yet? <Link to='/signup'>create one →</Link>
+      </p>
+      <p className='login-text'>
+        Forgot your password? <Link to='/request-password-reset'>reset it</Link>
+      </p>
     </Layout>
   )
 }
 
 export function Signup() {
   return (
-    <Layout>
-      <MountainsIcon size={100} weight='thin' />
-      <div className='login login-text'>
+    <Layout title='Create account'>
+      <div className='login'>
         <SignupForm appearance={authAppearance} />
       </div>
-      <br />
-      <span className='login-text text-sm font-medium'>
-        I already have an account (
-        <Link to='/login' className='underline'>
-          go to login
-        </Link>
-        ).
-      </span>
+      <p className='login-text'>
+        Already have an account? <Link to='/login'>sign in</Link>
+      </p>
     </Layout>
   )
 }
 
 export function EmailVerification() {
   return (
-    <Layout>
-      <MountainsIcon size={100} weight='thin' />
+    <Layout title='Verify email'>
       <div className='login'>
         <VerifyEmailForm appearance={authAppearance} />
       </div>
-      <br />
-      <span className='login-text text-sm font-medium'>
-        If everything is okay,{' '}
-        <Link to='/login' className='underline'>
-          go to login
-        </Link>
-      </span>
+      <p className='login-text'>
+        All set? <Link to='/login'>sign in</Link>
+      </p>
     </Layout>
   )
 }
 
 export function RequestPasswordReset() {
   return (
-    <Layout>
-      <MountainsIcon size={100} weight='thin' />
-      <div className='login login-text'>
+    <Layout title='Reset password'>
+      <div className='login'>
         <ForgotPasswordForm appearance={authAppearance} />
       </div>
     </Layout>
@@ -104,18 +100,13 @@ export function RequestPasswordReset() {
 
 export function PasswordReset() {
   return (
-    <Layout>
-      <MountainsIcon size={100} weight='thin' />
-      <div className='login login-text'>
+    <Layout title='Set new password'>
+      <div className='login'>
         <ResetPasswordForm appearance={authAppearance} />
       </div>
-      <br />
-      <span className='login-text text-sm font-medium'>
-        If everything is okay,{' '}
-        <Link to='/login' className='underline'>
-          go to login
-        </Link>
-      </span>
+      <p className='login-text'>
+        Done? <Link to='/login'>sign in</Link>
+      </p>
     </Layout>
   )
 }

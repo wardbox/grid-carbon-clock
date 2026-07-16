@@ -16,7 +16,7 @@ import {
 import { motion } from 'motion/react'
 import { transitions } from '../motion/transitionPresets'
 import { cn } from '../lib/utils'
-import { debounce } from 'lodash'
+import debounce from 'lodash/debounce'
 import type { SpringTransition } from '../motion/transitionPresets'
 import { useMotion } from '../motion/motion-provider'
 
